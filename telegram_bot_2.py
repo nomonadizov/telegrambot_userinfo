@@ -1,4 +1,5 @@
 import logging
+import telegram
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 import os
@@ -8,6 +9,7 @@ from db import insert_data_to
 
 load_dotenv()
 BOT_TOKEN = f"{os.getenv('BOT_TOKEN')}"
+bot = telegram.Bot(token=BOT_TOKEN)
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 ASK_NAME_1, ASK_NAME, ASK_BIRTH_YEAR, ASK_BIRTH_MONTH, ASK_BIRTH_DAY, ASK_EDUCATION, ASK_REGION, ASK_PHONE, ASK_PHONE_MANUAL,\
@@ -26,6 +28,29 @@ EXPECTED_LENGTH_OPTIONS = ["1 Year", "3 Years", "5 Years", "Prefer not to say"]
 LANGUAGE_OPTIONS = ["Uzbek", "Russian", "English", "Other"]
 IT_KNOWLEDGE_OPTIONS = ["0%", "30%", "50%", "70%", "100%"]
 SOURCE_OPTIONS = ["Friend", "Family Member", "Social Media", "Street Advertisement", "Other"]
+
+help_text = (
+    "Here are the commands you can use:\n"
+    "/start - Start interacting with the bot\n"
+    "/help - Get this help message\n"
+    "Feel free to ask anything!"
+)
+
+async def handle_update(data):
+    # Process data from Telegram webhook here
+    if 'message' in data:
+        chat_id = data['message']['chat']['id']
+        message_text = data['message']['text']
+
+        if message_text == "/help":
+            await bot.send_message(chat_id=chat_id, text=help_text)
+        else:
+            # Send a generic reply or custom response
+            await bot.send_message(chat_id=chat_id, text="Hello! You sent: " + message_text)
+    print("Received data:", data)
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(help_text)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     username = update.message.from_user.username
@@ -290,7 +315,7 @@ from telegram.ext import ConversationHandler
 
 def main() -> None:
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-
+    app.add_handler(CommandHandler("help", help_command))
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
         states={

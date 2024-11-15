@@ -71,6 +71,7 @@ pyRFC3339==1.1
 python-apt==2.7.7+ubuntu3
 python-dateutil==2.8.2
 python-debian==0.1.49+ubuntu2
+python-dotenv==1.0.1
 python-telegram-bot==21.7
 pytz==2024.1
 pyudev==0.24.0

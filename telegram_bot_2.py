@@ -171,14 +171,14 @@ async def ask_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def ask_birth_year(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     year = update.message.text
-    if len(year) == 10 and year[:2].isdigit() and year[3:5].isdigit() and year[6:].isdigit() and int(year[6:])<datetime.datetime.now().year and int(year[:2])<32 and int(year[3:6])<13:
-        if int(year[3:6]) == 2 and int(year[:2])>29:
+    if len(year) == 10 and year[:2].isdigit() and year[3:5].isdigit() and year[6:].isdigit() and int(year[6:])<datetime.datetime.now().year and int(year[:2])<32 and int(year[3:5])<13:
+        if int(year[3:5]) == 2 and int(year[:2])>29:
             await update.message.reply_text("Туғилган санангизни киритишда хатолик юз берди. Илтимос намунадагидек қилиб, қайта юборинг!\nНамуна: 02-02-2004")
             return ASK_BIRTH_YEAR
         else:
             context.user_data['Birth Year'] = year
             await update.message.reply_text("🎓 Таълим даражангизни танланг: ",
-                                            reply_markup=ReplyKeyboardMarkup([EDUCATION_OPTIONS], one_time_keyboard=True))
+                                            reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in EDUCATION_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
             return ASK_EDUCATION
     else:
         await update.message.reply_text("Туғилган санангизни киритишда хатолик юз берди. Илтимос намунадагидек қилиб, қайта юборинг!\nНамуна: 02-02-2004")
@@ -189,7 +189,7 @@ async def ask_education(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(education)
     if education in EDUCATION_OPTIONS:
         context.user_data['Education Level'] = education
-        await update.message.reply_text("🌍 Вилоятингизни танланг:", reply_markup=ReplyKeyboardMarkup(keyboard=[REGION_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
+        await update.message.reply_text("🌍 Вилоятингизни танланг:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(option)] for option in REGION_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
         return ASK_REGION
     else:
         await update.message.reply_text("Таълим даражангизни қуйидагилар орасидан танланг! ")
@@ -201,10 +201,10 @@ async def ask_region(update: Update, context: ContextTypes.DEFAULT_TYPE) :
     if region in REGION_OPTIONS:
         context.user_data['Region'] = region
         await update.message.reply_text("🌍 Яшаш туманингизни танланг:",
-                                        reply_markup=ReplyKeyboardMarkup(keyboard=[DISTRICT[region]], one_time_keyboard=True, resize_keyboard=True))
+                                        reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(option)] for option in DISTRICT[region]], one_time_keyboard=True, resize_keyboard=True))
         return ASK_DISTRICT
     else:
-        await update.message.reply_text("🌍 Вилоятингизни қайта танланг:", reply_markup=ReplyKeyboardMarkup(keyboard=[REGION_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
+        await update.message.reply_text("🌍 Вилоятингизни қайта танланг:", reply_markup=ReplyKeyboardMarkup(keyboard=[[KeyboardButton(option)] for option in REGION_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
         return ASK_REGION
 
 async def ask_district(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -272,7 +272,7 @@ async def ask_workplace(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     workplace = update.message.text
     if not workplace.isdigit():
         context.user_data['Previous Workplace'] = workplace
-        await update.message.reply_text("💰 Қанча маош кутмоқдасиз ?", reply_markup=ReplyKeyboardMarkup([EXPECTED_SALARY_OPTIONS], one_time_keyboard=True))
+        await update.message.reply_text("💰 Қанча маош кутмоқдасиз ?", reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in EXPECTED_SALARY_OPTIONS], one_time_keyboard=True))
         return ASK_EXPECTED_SALARY
     else:
         await update.message.reply_text("Охирги иш жойингиз ҳақида маълумотларни илтимос қайтадан киритинг:")
@@ -282,7 +282,7 @@ async def ask_expected_salary(update: Update, context: ContextTypes.DEFAULT_TYPE
     salary = update.message.text
     if salary in EXPECTED_SALARY_OPTIONS:
         context.user_data['Expected Salary'] = salary
-        await update.message.reply_text("⏳ Биз билан қанча муддат давомида бирга ишлай оласиз?", reply_markup=ReplyKeyboardMarkup([EXPECTED_LENGTH_OPTIONS], one_time_keyboard=True))
+        await update.message.reply_text("⏳ Биз билан қанча муддат давомида бирга ишлай оласиз?", reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in EXPECTED_LENGTH_OPTIONS], one_time_keyboard=True))
         return ASK_EXPECTED_LENGTH
     else:
         await update.message.reply_text("Қанча маош кутмоқдасиз ?")
@@ -292,7 +292,7 @@ async def ask_expected_length(update: Update, context: ContextTypes.DEFAULT_TYPE
     length = update.message.text
     if length in EXPECTED_LENGTH_OPTIONS:
         context.user_data['Expected Length'] = length
-        await update.message.reply_text("🗣 Қайси тилларни биласиз?", reply_markup=ReplyKeyboardMarkup([LANGUAGE_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
+        await update.message.reply_text("🗣 Қайси тилларни биласиз?", reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in LANGUAGE_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
         return ASK_LANGUAGE
     else:
         await update.message.reply_text("Биз билан қанча муддат давомида бирга ишлай оласиз?")
@@ -303,7 +303,7 @@ async def ask_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     language = update.message.text
     if language in LANGUAGE_OPTIONS:
         context.user_data['Language'] = language
-        await update.message.reply_text("🌍 Тил билиш даражангизни кўрсатинг:", reply_markup=ReplyKeyboardMarkup([["Бошланғич", "Ўрта", "Юқори", "Она тилим"]], one_time_keyboard=True, resize_keyboard=True))
+        await update.message.reply_text("🌍 Тил билиш даражангизни кўрсатинг:", reply_markup=ReplyKeyboardMarkup([["Бошланғич", "Ўрта"], ["Юқори", "Она тилим"]], one_time_keyboard=True, resize_keyboard=True))
         return ASK_LANGUAGE_LEVEL
     else:
         await update.message.reply_text("Қайси тилларни биласиз?")
@@ -325,14 +325,14 @@ async def ask_language_level(update: Update, context: ContextTypes.DEFAULT_TYPE)
 async def ask_additional_language(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     answer = update.message.text
     if answer == "Ҳа":
-        await update.message.reply_text("🌍 Қуйидагилар орасидан биладиган тилингизни танланг:", reply_markup=ReplyKeyboardMarkup([LANGUAGE_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
+        await update.message.reply_text("🌍 Қуйидагилар орасидан биладиган тилингизни танланг:", reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in LANGUAGE_OPTIONS], one_time_keyboard=True, resize_keyboard=True))
         return ASK_ADDITIONAL_LANGUAGE_LEVEL
     elif update.message.text == "Йўқ":
         context.user_data['Additional Language'] = "N/A"
         context.user_data['Additional Language Level'] = "N/A"
         await update.message.reply_text(
             "💻 Компьютер саводхонлик даражангизни қуйидагилар орасидан танланг:",
-            reply_markup=ReplyKeyboardMarkup([IT_KNOWLEDGE_OPTIONS], one_time_keyboard=True, resize_keyboard=True)
+            reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in IT_KNOWLEDGE_OPTIONS], one_time_keyboard=True, resize_keyboard=True)
         )
         return ASK_IT_KNOWLEDGE
     else:
@@ -343,7 +343,7 @@ async def ask_additional_language_level(update: Update, context: ContextTypes.DE
     additional_language = update.message.text
     if additional_language in LANGUAGE_OPTIONS:
         context.user_data['Additional Language'] = additional_language
-        await update.message.reply_text(f"{additional_language} тилини биладиган даражангизни кўрсатинг:!", reply_markup=ReplyKeyboardMarkup([["Бошланғич", "Ўрта", "Юқори", "Она тилим"]],
+        await update.message.reply_text(f"{additional_language} тилини биладиган даражангизни кўрсатинг:!", reply_markup=ReplyKeyboardMarkup([["Бошланғич", "Ўрта"], ["Юқори", "Она тилим"]],
                                                                                             resize_keyboard=True,one_time_keyboard=True))
         return ASK_ADDITIONAL_LANGUAGE_LEVEL_LEVEL
     else:
@@ -352,16 +352,16 @@ async def ask_additional_language_level(update: Update, context: ContextTypes.DE
 
 async def ask_additional_language_level_level(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     additional_language_level = update.message.text
-    if additional_language_level in ["Бошланғич", "Ўрта", "Юқори", "Она тилим"]:
+    if additional_language_level in ["Бошланғич", "Ўрта","Юқори", "Она тилим"]:
         context.user_data['Additional Language Level'] = additional_language_level
         await update.message.reply_text(
             "💻 Компьютер саводхонлик даражангизни қуйидагилар орасидан танланг:",
-            reply_markup=ReplyKeyboardMarkup([IT_KNOWLEDGE_OPTIONS], one_time_keyboard=True,resize_keyboard=True))
+            reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in IT_KNOWLEDGE_OPTIONS], one_time_keyboard=True,resize_keyboard=True))
         return ASK_IT_KNOWLEDGE
     else:
         await update.message.reply_text("What is your level of knowledge!",
                                         reply_markup=ReplyKeyboardMarkup(
-                                            [["Бошланғич", "Ўрта", "Юқори", "Она тилим"]],
+                                            [["Бошланғич", "Ўрта"],["Юқори", "Она тилим"]],
                                             one_time_keyboard=True, resize_keyboard=True))
         return ASK_ADDITIONAL_LANGUAGE_LEVEL_LEVEL
 
@@ -372,7 +372,7 @@ async def ask_it_knowledge(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         context.user_data['IT Knowledge'] = it_knowledge
         await update.message.reply_text(
             "👤 Биз ҳақимизда қаердан хабар топдингиз. Жавоблар орасидан танланг:",
-            reply_markup=ReplyKeyboardMarkup([SOURCE_OPTIONS], one_time_keyboard=True, resize_keyboard=True)
+            reply_markup=ReplyKeyboardMarkup([[KeyboardButton(option)] for option in SOURCE_OPTIONS], one_time_keyboard=True, resize_keyboard=True)
         )
         return ASK_SOURCE
     else:
@@ -383,7 +383,24 @@ async def ask_source(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     source = update.message.text
     if source in SOURCE_OPTIONS:
         context.user_data['Source'] = source
-        await update.message.reply_text(f"{context.user_data}")
+        context.user_data['isLiked'] = False
+        await update.message.reply_text(f"Исм-шарифингиз: {context.user_data['Name']}\n"
+                                        f"Туғилган санангиз: {context.user_data['Birth Year']}\n"
+                                        f"Таълим даражангиз: {context.user_data['Education Level']}\n"
+                                        f"Вилоятингиз: {context.user_data['Region']}\n"
+                                        f"Яшаш туманингиз: {context.user_data['District']}\n"
+                                        f"Тел: {context.user_data['Phone Number']}\n"
+                                        f"Қўшимча телефон: {context.user_data['Additional Phone Number']}\n"
+                                        f"Оилавий ҳолатингиз: {context.user_data['Marital Status']}\n"
+                                        f"Охирги иш жойингиз: {context.user_data['Previous Workplace']}\n"
+                                        f"Кутилаётган маош: {context.user_data['Expected Salary']}\n"
+                                        f"Кутилаётган иш муддати: {context.user_data['Expected Length']}\n"
+                                        f"Тил(1): {context.user_data['Language']}\n"
+                                        f"Тил(1) билиш даражангиз{context.user_data['Language Level']}\n"
+                                        f"Тил(1): {context.user_data['Additional Language']}\n"
+                                        f"Тил(2) билиш даражангиз{context.user_data['Additional Language Level']}\n"
+                                        f"Компьютер саводхонлик даражангиз: {context.user_data['IT Knowledge']}\n"
+                                        f"Биз ҳақимизда: {context.user_data['Source']}\n")
         await update.message.reply_text(
             "🥳 Рўйхатдан ўтиш жараёнини муваффақиятли якунлаганингиз билан табриклаймиз! \nИлтимос маълумотларингизни қайта кўриб чиқинг ва тасдиқланг.",
             reply_markup=ReplyKeyboardMarkup([[KeyboardButton(text="Тасдиқлаш")],
@@ -399,7 +416,8 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     if confirmation_of == "Тасдиқлаш":
         da_ta = list(context.user_data.values())
         print(da_ta)
-        keyboard_1 = [[InlineKeyboardButton("Instagram саҳифамизга қуйидаги ҳавола орқали ўтинг👇👇👇", url="https://www.instagram.com/profter_uz/profilecard/?igsh=N2F5YWZtZmNwNTR0")]]
+        await update.message.reply_text("",reply_markup=ReplyKeyboardMarkup([['']]))
+        keyboard_1 = [[InlineKeyboardButton("Instagram саҳифамиз👇👇👇", url="https://www.instagram.com/profter_uz/profilecard/?igsh=N2F5YWZtZmNwNTR0")]]
         reply_markup_3 = InlineKeyboardMarkup(keyboard_1)
         await update.message.reply_text("✅ Маълумотларингиз қабул қилинди. Тез орада сиз билан ходимларимиз боғланади 😊.\n\nБизни ижтимоий тармоқларда кузатиб боришни унутманг!\n",
                                         reply_markup=reply_markup_3)

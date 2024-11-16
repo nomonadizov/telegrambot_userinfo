@@ -1,10 +1,10 @@
 import sqlite3
 
-connection = sqlite3.connect('storage.db')
+connection = sqlite3.connect('userinfo.db')
 cursor = connection.cursor()
 
 create_db_user_info = """
-    CREATE TABLE IF NOT EXISTS userinfo (
+    CREATE TABLE IF NOT EXISTS info_of_user (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
         fullname TEXT,
@@ -23,14 +23,15 @@ create_db_user_info = """
         language_2 TEXT,
         language_2_level TEXT,
         it_knowledge TEXT,
-        source TEXT
+        source TEXT,
+        isLiked BOOLEAN
     );
 """
 cursor.execute(create_db_user_info)
 connection.commit()
 insert_query = """
-    INSERT INTO userinfo (username, fullname, birth, education, address, district, phone_number, additional_phone_number, marital_status, previous_job, expected_salary, expected_length, language_1, language_1_level, language_2, language_2_level, it_knowledge, source)
-    VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO info_of_user (username, fullname, birth, education, address, district, phone_number, additional_phone_number, marital_status, previous_job, expected_salary, expected_length, language_1, language_1_level, language_2, language_2_level, it_knowledge, source, isLiked)
+    VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 """
 
 def insert_data_to(modified_data):

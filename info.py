@@ -6,7 +6,7 @@ def send_message(message):
     import os
 
     BOT_TOKEN = os.getenv('BOT_TOKEN')
-    CHAT_ID = -1002172856445
+    CHAT_ID = os.getenv('CHAT_ID')
     conn = sqlite3.connect('userinfo.db')
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM info_of_user")

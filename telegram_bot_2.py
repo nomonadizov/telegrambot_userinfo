@@ -1,5 +1,4 @@
 import logging
-import asyncio
 import telegram
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
@@ -8,6 +7,7 @@ from dotenv import load_dotenv
 import datetime
 import time
 from db import insert_data_to
+from info import *
 
 load_dotenv()
 BOT_TOKEN = f"{os.getenv('BOT_TOKEN')}"
@@ -45,7 +45,7 @@ DISTRICT = {
     ],
     "Бухоро вилояти": [
         "Олот тумани", "Бухоро тумани", "Вобкент тумани",
-        "Ғиждувон тумани", "Қоракўл тумани", "Қаршининг Қуёши",
+        "Ғиждувон тумани", "Қоракўл тумани", "Қоровулбозор тумани",
         "Пешкў тумани", "Ромитан тумани", "Шофиркон тумани",
         "Жондор тумани"
     ],
@@ -384,23 +384,24 @@ async def ask_source(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     if source in SOURCE_OPTIONS:
         context.user_data['Source'] = source
         context.user_data['isLiked'] = False
-        await update.message.reply_text(f"Исм-шарифингиз: {context.user_data['Name']}\n"
-                                        f"Туғилган санангиз: {context.user_data['Birth Year']}\n"
-                                        f"Таълим даражангиз: {context.user_data['Education Level']}\n"
-                                        f"Вилоятингиз: {context.user_data['Region']}\n"
-                                        f"Яшаш туманингиз: {context.user_data['District']}\n"
-                                        f"Тел: {context.user_data['Phone Number']}\n"
-                                        f"Қўшимча телефон: {context.user_data['Additional Phone Number']}\n"
-                                        f"Оилавий ҳолатингиз: {context.user_data['Marital Status']}\n"
-                                        f"Охирги иш жойингиз: {context.user_data['Previous Workplace']}\n"
-                                        f"Кутилаётган маош: {context.user_data['Expected Salary']}\n"
-                                        f"Кутилаётган иш муддати: {context.user_data['Expected Length']}\n"
-                                        f"Тил(1): {context.user_data['Language']}\n"
-                                        f"Тил(1) билиш даражангиз{context.user_data['Language Level']}\n"
-                                        f"Тил(1): {context.user_data['Additional Language']}\n"
-                                        f"Тил(2) билиш даражангиз{context.user_data['Additional Language Level']}\n"
-                                        f"Компьютер саводхонлик даражангиз: {context.user_data['IT Knowledge']}\n"
-                                        f"Биз ҳақимизда: {context.user_data['Source']}\n")
+        MESSAGE = (f"Исм-шарифингиз: {context.user_data['Name']}\n"
+                        f"Туғилган санангиз: {context.user_data['Birth Year']}\n"
+                        f"Таълим даражангиз: {context.user_data['Education Level']}\n"
+                        f"Вилоятингиз: {context.user_data['Region']}\n"
+                        f"Яшаш туманингиз: {context.user_data['District']}\n"
+                        f"Тел: {context.user_data['Phone Number']}\n"
+                        f"Қўшимча телефон: {context.user_data['Additional Phone Number']}\n"
+                        f"Оилавий ҳолатингиз: {context.user_data['Marital Status']}\n"
+                        f"Охирги иш жойингиз: {context.user_data['Previous Workplace']}\n"
+                        f"Кутилаётган маош: {context.user_data['Expected Salary']}\n"
+                        f"Кутилаётган иш муддати: {context.user_data['Expected Length']}\n"
+                        f"Тил(1): {context.user_data['Language']}\n"
+                        f"Тил(1) билиш даражангиз: {context.user_data['Language Level']}\n"
+                        f"Тил(1): {context.user_data['Additional Language']}\n"
+                        f"Тил(2) билиш даражангиз: {context.user_data['Additional Language Level']}\n"
+                        f"Компьютер саводхонлик даражангиз: {context.user_data['IT Knowledge']}\n"
+                        f"Биз ҳақимизда: {context.user_data['Source']}\n")
+        await update.message.reply_text(MESSAGE)
         await update.message.reply_text(
             "🥳 Рўйхатдан ўтиш жараёнини муваффақиятли якунлаганингиз билан табриклаймиз! \nИлтимос маълумотларингизни қайта кўриб чиқинг ва тасдиқланг.",
             reply_markup=ReplyKeyboardMarkup([[KeyboardButton(text="Тасдиқлаш")],
@@ -415,8 +416,26 @@ async def confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     confirmation_of = update.message.text
     if confirmation_of == "Тасдиқлаш":
         da_ta = list(context.user_data.values())
+        send_message(f"Номзод ҳақида маълумот:\n\n"
+                     f"Исм-шарифи: {context.user_data['Name']}\n"
+                     f"Туғилган санаси: {context.user_data['Birth Year']}\n"
+                     f"Таълим даражаси: {context.user_data['Education Level']}\n"
+                     f"Вилояти: {context.user_data['Region']}\n"
+                     f"Яшаш тумани: {context.user_data['District']}\n"
+                     f"Тел: {context.user_data['Phone Number']}\n"
+                     f"Қўшимча телефон: {context.user_data['Additional Phone Number']}\n"
+                     f"Телеграм аккаунт: {context.user_data['username']}\n"
+                     f"Оилавий ҳолати: {context.user_data['Marital Status']}\n"
+                     f"Охирги иш жойи: {context.user_data['Previous Workplace']}\n"
+                     f"Кутилаётган маош: {context.user_data['Expected Salary']}\n"
+                     f"Кутилаётган иш муддати: {context.user_data['Expected Length']}\n"
+                     f"Тил(1): {context.user_data['Language']}\n"
+                     f"Тил(1) билиш даражаси: {context.user_data['Language Level']}\n"
+                     f"Тил(1): {context.user_data['Additional Language']}\n"
+                     f"Тил(2) билиш даражаси: {context.user_data['Additional Language Level']}\n"
+                     f"Компьютер саводхонлик даражаси: {context.user_data['IT Knowledge']}\n"
+                     f"Биз ҳақимизда: {context.user_data['Source']}\n")
         print(da_ta)
-        await update.message.reply_text("",reply_markup=ReplyKeyboardMarkup([['']]))
         keyboard_1 = [[InlineKeyboardButton("Instagram саҳифамиз👇👇👇", url="https://www.instagram.com/profter_uz/profilecard/?igsh=N2F5YWZtZmNwNTR0")]]
         reply_markup_3 = InlineKeyboardMarkup(keyboard_1)
         await update.message.reply_text("✅ Маълумотларингиз қабул қилинди. Тез орада сиз билан ходимларимиз боғланади 😊.\n\nБизни ижтимоий тармоқларда кузатиб боришни унутманг!\n",
